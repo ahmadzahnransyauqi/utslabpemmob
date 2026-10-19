@@ -20,23 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _startQuiz() {
-    if (_nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Harap masukkan nama terlebih dahulu!')),
-      );
-      return;
-    }
-    final quizProvider = Provider.of<QuizProvider>(context, listen: false);
-    quizProvider.setUserName(_nameController.text.trim());
-    quizProvider.resetQuiz();
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const QuizScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -44,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kuis Pemrograman Mobile'),
+        title: const Text('Aplikasi Kuis UTS'),
         actions: [
           IconButton(
             icon: Icon(quizProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
@@ -54,35 +37,73 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: SafeArea(
         child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: mediaQuery.size.width * 0.08,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.quiz_rounded,
-                    size: 100,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  SizedBox(height: mediaQuery.size.height * 0.03),
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nama Peserta',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.person),
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: mediaQuery.size.width * 0.06,
+                  vertical: 24,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/quiz_logo.png',
+                      height: mediaQuery.size.height * 0.2,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.quiz_rounded,
+                        size: 100,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: mediaQuery.size.height * 0.03),
-                  CustomButton(
-                    text: 'Mulai Kuis',
-                    onPressed: _startQuiz,
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    Text(
+                      'Selamat Datang di QuizApp!',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Uji pengetahuan seputar Pemrograman Mobile & Flutter di sini.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Masukkan Nama Kamu',
+                        prefixIcon: const Icon(Icons.person_outline),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    CustomButton(
+                      text: 'Mulai Kuis',
+                      onPressed: () {
+                        if (_nameController.text.trim().isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Isi nama terlebih dahulu!')),
+                          );
+                          return;
+                        }
+                        quizProvider.setUserName(_nameController.text.trim());
+                        quizProvider.resetQuiz();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const QuizScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

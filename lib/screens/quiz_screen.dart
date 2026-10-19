@@ -18,6 +18,12 @@ class QuizScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Soal ${quizProvider.currentQuestionIndex + 1}/${quizProvider.questions.length}'),
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: Icon(quizProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            onPressed: () => quizProvider.toggleTheme(),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Center(
@@ -34,11 +40,19 @@ class QuizScreen extends StatelessWidget {
                     minHeight: 8,
                   ),
                   SizedBox(height: mediaQuery.size.height * 0.03),
-                  Text(
-                    currentQuestion.questionText,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        currentQuestion.questionText,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: mediaQuery.size.height * 0.02),
@@ -48,7 +62,7 @@ class QuizScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final isSelected = quizProvider.userAnswers[quizProvider.currentQuestionIndex] == index;
                         return OptionCard(
-                          optionText: currentQuestion.options[index],
+                          text: currentQuestion.options[index],
                           isSelected: isSelected,
                           onTap: () => quizProvider.answerQuestion(index),
                         );
